@@ -1,0 +1,46 @@
+#Libraries to be used
+import easyocr
+from gtts import gTTS
+from IPython.display import Audio
+from googletrans import Translator
+import PIL
+from PIL import ImageDraw
+import wget
+#url='https://ingpeaceproject.com/wp-content/uploads/2013/11/7SampleTextindi.jpg'
+#Enter URL/PATH of Image to be translated
+url=input('Input image url, format supported jpeg, jpg :')
+
+filename=wget.download(url)
+#Enter Input Image's Language ISO Code
+InputLangText=input('Lang of input image: ')
+
+#Enter required Audio Language ISO Code
+OutLangText=input('Desired lang code: ')
+
+#Specify if any specific speech accent is required (ISO Code)
+OutLangAccent=input('Desired Lang Accent: ')
+
+def TextImageReader():
+  reader=easyocr.Reader([InputLangText])
+  translator=Translator()
+  im=PIL.Image.open(filename)
+  bounds=reader.readtext(filename, add_margin=0.55, width_ths=0.7, link_threshold=0.8, decoder='beamsearch', blocklist='z.')
+  text1= ' '.join([i[1] for i in bounds] )
+  return text1
+
+#def DetectLanguage(TextImageReader):
+ # if translator.detect(text1).lang==InputLangText:
+ #   return True
+ # else:
+ #   return False
+
+def AudioFileOut(OutLangText='us'):
+  #if DetectLanguage==True:
+  text2=translator.translate(TextImageReader(), src=InputLangText, dest=OutLangText)
+  print(text2.text)
+  text2_tts=gTTS(text2.text, lang=OutLangAccent)
+  text2_tts.save(f'filename.mp3')
+  
+  return Audio(f'filename.mp3',autoplay=True)
+
+AudioFileOut()
