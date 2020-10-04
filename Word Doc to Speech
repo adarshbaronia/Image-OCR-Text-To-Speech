@@ -1,0 +1,19 @@
+import docx
+from gtts import gTTS 
+import pygame
+text=''
+doc=docx.Document('The Velvet Rope Economy How Inequality Became Big Business.docx')
+for i in range(len(doc.paragraphs)):
+    text=text+doc.paragraphs[i].text
+language = 'en'
+#cleaning line breaks in text
+text = text.replace('\n',' ')
+#text to speech object
+myobj = gTTS(text=text, lang=language, slow=False) 
+
+#METHOD 1
+#Saving Audio object, playback language Female
+myobj.save("Audio.mp3")
+pygame.mixer.init()
+pygame.mixer.music.load('Audio.mp3')
+pygame.mixer.music.play()
