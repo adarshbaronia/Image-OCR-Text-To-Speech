@@ -1,0 +1,48 @@
+#!pip install pypdf2
+import PyPDF2 as pdf
+import os
+from gtts import gTTS 
+import pygame
+#blank string object to store text
+text = ''
+#list all files in directory and selecting Raghuram Rajan's take on Indian GDP
+for i in os.listdir():
+    if 'Raghuram' in i:
+        #reading pdf file
+        with open(i,'rb') as read_pdf:
+            #creating pdf reader object
+            pdf_reader=pdf.PdfFileReader(read_pdf)
+            
+            #checking number of pages in document
+            print(f"Number of pages in {i}: ",pdf_reader.numPages)
+            
+            #reading text through pdf
+            for j in range(pdf_reader.numPages):
+                page_object = pdf_reader.getPage(j)
+                text = text+page_object.extractText()
+        read_pdf.close()
+#selecting Audio Language
+language = 'en'
+#cleaning line breaks in text
+text = text.replace('\n',' ')
+#text to speech object
+myobj = gTTS(text=text, lang=language, slow=False) 
+
+#METHOD 1
+#Saving Audio object, playback language Female
+myobj.save("Audio.mp3")
+pygame.mixer.init()
+pygame.mixer.music.load('Audio.mp3')
+pygame.mixer.music.play()
+
+#METHOD 2
+#playback language male
+import pyttsx3 
+# init function to get an engine instance for the speech synthesis  
+engine = pyttsx3.init() 
+  
+# say method on the engine that passing input text to be spoken 
+engine.say(text) 
+  
+# run and wait method, it processes the voice commands.  
+engine.runAndWait() 
